@@ -38,7 +38,7 @@ trait MeliRequests
             return $this->response(Meli::withAuthToken()->get('items', $params));
         } else {
             $user = $this->getUser();
-            $params = ['available_orders' => 'last_updated_desc'];
+            $params = ['order' => 'last_updated_desc'];
             if($options){
                 $params = array_merge($params, $options);
             }
@@ -55,7 +55,7 @@ trait MeliRequests
     public function getOrders($order = null, $options = null)
     {
         $user = $this->getUser();
-        $params = ['seller' => $user->id, 'available_sorts' => 'date_desc'];
+        $params = ['seller' => $user->id, 'sort' => 'date_desc'];
         if ($order) {
             $params['q'] = $order;
         }
@@ -85,6 +85,18 @@ trait MeliRequests
         return $this->response(Meli::withAuthToken()->get('shipment_labels', ['shipment_ids' => $shipment, 'savePdf' => 'Y']));
     }
 
+
+    /**
+     * Send answer
+     * @param string|int $question
+     * @param string $answer
+     * @return object|null
+     */
+    public function sendAnswer($question, $answer){
+        $params = ['question_id' => $question, 'text' => $answer];
+        return $this->response(Meli::withAuthToken()->post('answers', $params));
+    }
+
     /**
      * Get all questions
      * @param array|null $options
@@ -92,7 +104,7 @@ trait MeliRequests
      */
     public function getQuestions(array $options = null)
     {
-        $params = ['available_sorts' => 'date_created'];
+        $params = ['sort' => 'date_created'];
         if($options){
             $params = array_merge($params, $options);
         }

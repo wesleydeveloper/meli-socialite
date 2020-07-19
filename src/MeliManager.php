@@ -10,6 +10,7 @@ namespace Kolovious\MeliSocialite;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Kolovious\MeliSocialite\Traits\MeliRequests;
 
 
 /**
@@ -31,6 +32,7 @@ class MeliManager extends \Meli
      */
     protected $call_with_token;
 
+    use MeliRequests;
     /**
      * Constructor method.
      *

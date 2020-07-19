@@ -9,7 +9,7 @@ use Kolovious\MeliSocialite\Facade\Meli;
 trait MeliRequests
 {
     /**
-     * Get user by id
+     * Get user by id or current user
      * @param string|int|null $user
      * @return object|null
      */
@@ -31,7 +31,7 @@ trait MeliRequests
             }
             return $this->response(Meli::withAuthToken()->get('items', ['ids' => $items]));
         } else {
-            $user = $this->currentUser();
+            $user = $this->getUser();
             return $this->response(Meli::withAuthToken()->get("users/{$user->id}/items/search"));
         }
     }
@@ -43,12 +43,12 @@ trait MeliRequests
      */
     public function getOrders($order = null)
     {
-        $user = $this->currentUser();
+        $user = $this->getUser();
         $params = ['seller' => $user->id];
         if ($order) {
             $params['q'] = $order;
         }
-        return $this->response(Meli::withAuthToken()->get('orders/search', $params))->results;
+        return $this->response(Meli::withAuthToken()->get('orders/search', $params));
     }
 
     /**
@@ -78,15 +78,6 @@ trait MeliRequests
     public function getAnswers()
     {
         return $this->response(Meli::withAuthToken()->post('answers'));
-    }
-
-    /**
-     * Get current user
-     * @return object|null
-     */
-    private function currentUser()
-    {
-        return $this->response(Meli::withAuthToken()->get("users/me"));
     }
 
     /**

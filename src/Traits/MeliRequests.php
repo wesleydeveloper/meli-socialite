@@ -20,8 +20,8 @@ trait MeliRequests
 
     /**
      * Get all items or get item by id.
-     * @param array|null $items
-     * @return array|null
+     * @param array|string|null $items
+     * @return object|null
      */
     public function getItems($items = null)
     {
@@ -39,7 +39,7 @@ trait MeliRequests
     /**
      * Get orders all or get order by id
      * @param string|int|null $order
-     * @return array|null
+     * @return object|null
      */
     public function getOrders($order = null)
     {
@@ -72,12 +72,12 @@ trait MeliRequests
     }
 
     /**
-     * Get all answers
-     * @return array|object|null
+     * Get all questions
+     * @return object|null
      */
-    public function getAnswers()
+    public function getQuestions()
     {
-        return $this->response(Meli::withAuthToken()->post('answers'));
+        return $this->response(Meli::withAuthToken()->get('my/received_questions/search'));
     }
 
     /**
@@ -92,7 +92,7 @@ trait MeliRequests
     /**
      * Validate response
      * @param array $request
-     * @return object|array|null
+     * @return object|null
      */
     private function response($request)
     {

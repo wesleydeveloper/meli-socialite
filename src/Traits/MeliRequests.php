@@ -9,34 +9,37 @@ use Kolovious\MeliSocialite\Facade\Meli;
 trait MeliRequests
 {
     /**
-     * @param string $user
-     * @return mixed
+     * Get user by id
+     * @param string|int|null $user
+     * @return object|null
      */
-    public function users($user = 'me')
+    public function getUser($user = 'me')
     {
-        return Meli::withAuthToken()->get("users/{$user}");
+        return $this->response(Meli::withAuthToken()->get("users/{$user}"));
     }
 
     /**
+     * Get all items or get item by id.
      * @param array|null $items
-     * @return mixed
+     * @return array|null
      */
-    public function items($items = null)
+    public function getItems($items = null)
     {
         if ($items) {
             if (is_array($items)) {
                 $items = implode(',', $items);
             }
-            return Meli::withAuthToken()->get('items', ['ids' => $items]);
+            return $this->response(Meli::withAuthToken()->get('items', ['ids' => $items]));
         } else {
             $user = $this->currentUser();
-            return Meli::withAuthToken()->get("users/{$user->id}/items/search");
+            return $this->response(Meli::withAuthToken()->get("users/{$user->id}/items/search"));
         }
     }
 
     /**
+     * Get orders all or get order by id
      * @param string|int|null $order
-     * @return mixed
+     * @return array|null
      */
     public function getOrders($order = null)
     {
@@ -49,8 +52,9 @@ trait MeliRequests
     }
 
     /**
-     * @param string|int|null $order
-     * @return mixed
+     * Get shipments by order id
+     * @param string|int $order
+     * @return object|null
      */
     public function getShipments($order)
     {
@@ -58,21 +62,27 @@ trait MeliRequests
     }
 
     /**
-     * @param $shipment
-     * @return mixed
+     * Get shipment Label pdf by id
+     * @param string|int $shipment
+     * @return object|null
      */
     public function getShipmentLabels($shipment)
     {
         return $this->response(Meli::withAuthToken()->get('shipment_labels', ['shipment_ids' => $shipment, 'savePdf' => 'Y']));
     }
 
+    /**
+     * Get all answers
+     * @return array|object|null
+     */
     public function getAnswers()
     {
         return $this->response(Meli::withAuthToken()->post('answers'));
     }
 
     /**
-     * @return object|bool
+     * Get current user
+     * @return object|null
      */
     private function currentUser()
     {
@@ -80,6 +90,7 @@ trait MeliRequests
     }
 
     /**
+     * Create user test
      * @return object|null
      */
     public function createUserTest()
@@ -88,6 +99,7 @@ trait MeliRequests
     }
 
     /**
+     * Validate response
      * @param array $request
      * @return object|array|null
      */

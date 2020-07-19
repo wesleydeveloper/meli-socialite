@@ -102,13 +102,9 @@ trait MeliRequests
      * @param array|null $options
      * @return object|null
      */
-    public function getQuestions(array $options = null)
+    public function getQuestions($options = null)
     {
-        $params = [];
-        if($options){
-            $params = array_merge($params, $options);
-        }
-        return $this->response(Meli::withAuthToken()->get('my/received_questions/search', $params));
+        return $this->response(Meli::withAuthToken()->get('my/received_questions/search', $options));
     }
 
     /**

@@ -21,32 +21,46 @@ trait MeliRequests
     /**
      * Get all items or get item by id.
      * @param array|string|null $items
+     * @param array|null $options
      * @return object|null
      */
-    public function getItems($items = null)
+    public function getItems($items = null, $options = null)
     {
+
         if ($items) {
             if (is_array($items)) {
                 $items = implode(',', $items);
             }
-            return $this->response(Meli::withAuthToken()->get('items', ['ids' => $items]));
+            $params = ['ids' => $items];
+            if($options){
+                $params = array_merge($params, $options);
+            }
+            return $this->response(Meli::withAuthToken()->get('items', $params));
         } else {
             $user = $this->getUser();
-            return $this->response(Meli::withAuthToken()->get("users/{$user->id}/items/search"));
+            $params = ['available_orders' => 'last_updated_desc'];
+            if($options){
+                $params = array_merge($params, $options);
+            }
+            return $this->response(Meli::withAuthToken()->get("users/{$user->id}/items/search", $params));
         }
     }
 
     /**
      * Get orders all or get order by id
      * @param string|int|null $order
+     * @param array|null $options
      * @return object|null
      */
-    public function getOrders($order = null)
+    public function getOrders($order = null, $options = null)
     {
         $user = $this->getUser();
-        $params = ['seller' => $user->id];
+        $params = ['seller' => $user->id, 'available_sorts' => 'date_desc'];
         if ($order) {
             $params['q'] = $order;
+        }
+        if($options){
+            $params = array_merge($params, $options);
         }
         return $this->response(Meli::withAuthToken()->get('orders/search', $params));
     }
@@ -73,11 +87,16 @@ trait MeliRequests
 
     /**
      * Get all questions
+     * @param array|null $options
      * @return object|null
      */
-    public function getQuestions()
+    public function getQuestions(array $options = null)
     {
-        return $this->response(Meli::withAuthToken()->get('my/received_questions/search'));
+        $params = ['available_sorts' => 'date_created'];
+        if($options){
+            $params = array_merge($params, $options);
+        }
+        return $this->response(Meli::withAuthToken()->get('my/received_questions/search', $params));
     }
 
     /**

@@ -104,7 +104,7 @@ trait MeliRequests
      */
     public function getQuestions(array $options = null)
     {
-        $params = ['sort' => 'date_created'];
+        $params = [];
         if($options){
             $params = array_merge($params, $options);
         }

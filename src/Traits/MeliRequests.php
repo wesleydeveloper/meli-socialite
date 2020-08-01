@@ -77,12 +77,19 @@ trait MeliRequests
 
     /**
      * Get shipment Label pdf by id
-     * @param string|int $shipment
+     * @param array|string|int $shipmentIds
+     * @param string $responseType
      * @return object|null
      */
-    public function getShipmentLabels($shipment)
+    public function getShipmentLabels($shipmentIds, $responseType = 'pdf')
     {
-        return $this->response(Meli::withAuthToken()->get('shipment_labels', ['shipment_ids' => $shipment, 'savePdf' => 'Y']));
+        $params = [
+            'shipment_ids' => is_array($shipmentIds) ? implode(',', $shipmentIds) : $shipmentIds,
+            'response_type' => $responseType,
+            'caller.id' => $this->getUser()->id
+        ];
+//        return $this->response(Meli::withAuthToken()->get('shipment_labels', $params));
+        return Meli::withAuthToken()->get('shipment_labels', $params);
     }
 
 

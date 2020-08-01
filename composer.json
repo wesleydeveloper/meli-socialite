@@ -31,7 +31,8 @@
     "require": {
         "laravel/socialite": "4.*",
         "illuminate/support": "7.*",
-        "mercadolibre/php-sdk": "master"
+        "mercadolibre/php-sdk": "master",
+        "ext-curl": "*"
     },
     "autoload": {
         "psr-4": {

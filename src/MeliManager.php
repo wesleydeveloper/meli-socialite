@@ -33,6 +33,7 @@ class MeliManager extends \Meli
     protected $call_with_token;
 
     use MeliRequests;
+
     /**
      * Constructor method.
      *
@@ -119,5 +120,51 @@ class MeliManager extends \Meli
             $this->call_with_token = false;
         }
         return parent::make_path($path, $params);
+    }
+
+    /**
+     * Download files
+     * @param string $path
+     * @param array $params
+     * @return array
+     */
+    public function download($path, $params = array())
+    {
+        $opts = [
+            CURLOPT_HEADER => true,
+            CURLOPT_RETURNTRANSFER => true,
+        ];
+
+        $uri = $this->make_path($path, $params);
+
+        $ch = curl_init($uri);
+        curl_setopt_array($ch, $opts);
+
+        $response = curl_exec($ch);
+
+        $reDispo = '/filename=(?<fl>[^\s]+|\x22[^\x22]+\x22)\x3B.*?/m';
+        if (preg_match($reDispo, $response, $mDispo)) {
+            $filename = trim($mDispo['fl'], ' ";');
+
+            $return['filename'] = $filename;
+        }
+        $reDispo = '/content-type:\s(?<ct>[\/\w]+)?/m';
+        if (preg_match($reDispo, $response, $mDispo)) {
+            $contentType = trim($mDispo['ct'], ' ";');
+
+            $return['contentType'] = $contentType;
+        }
+
+        $magicpos = strpos($response, "\x1a\x09\x01");
+        $return['binaryFile'] = substr($response, $magicpos);
+        if (curl_errno($ch)) {
+            $return['body'] = curl_error($ch);
+        }
+
+        $return["httpCode"] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        curl_close($ch);
+
+        return $return;
     }
 }

@@ -88,12 +88,6 @@ trait MeliRequests
             'response_type' => $responseType,
             'caller.id' => $this->getUser()->id
         ];
-        $opts = [
-            CURLOPT_HTTPHEADER => array('Content-Type: application/pdf'),
-            CURLOPT_RETURNTRANSFER => 0,
-            CURLOPT_FOLLOWLOCATION => 0
-
-        ];
         return Meli::withAuthToken()->download('shipment_labels', $params);
     }
 

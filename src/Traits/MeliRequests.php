@@ -10,12 +10,13 @@ trait MeliRequests
 {
     /**
      * Get user by id or current user
-     * @param string|int|null $user
+     * @param string|int|null $userId
      * @return object|null
+     * @throws \Exception
      */
-    public function getUser($user = 'me')
+    public function getUser($userId = 'me')
     {
-        return $this->response(Meli::withAuthToken()->get("users/{$user}"));
+        return $this->response(Meli::withAuthToken()->get("users/{$userId}"));
     }
 
     /**
@@ -23,6 +24,7 @@ trait MeliRequests
      * @param array|string|null $items
      * @param array|null $options
      * @return object|null
+     * @throws \Exception
      */
     public function getItems($items = null, $options = null)
     {
@@ -32,34 +34,34 @@ trait MeliRequests
                 $items = implode(',', $items);
             }
             $params = ['ids' => $items];
-            if($options){
+            if ($options) {
                 $params = array_merge($params, $options);
             }
             return $this->response(Meli::withAuthToken()->get('items', $params));
-        } else {
-            $user = $this->getUser();
-            $params = ['order' => 'last_updated_desc'];
-            if($options){
-                $params = array_merge($params, $options);
-            }
-            return $this->response(Meli::withAuthToken()->get("users/{$user->id}/items/search", $params));
         }
+        $user = $this->getUser();
+        $params = ['order' => 'last_updated_desc'];
+        if ($options) {
+            $params = array_merge($params, $options);
+        }
+        return $this->response(Meli::withAuthToken()->get("users/{$user->id}/items/search", $params));
     }
 
     /**
      * Get orders all or get order by id
-     * @param string|int|null $order
+     * @param string|int|null $orderId
      * @param array|null $options
      * @return object|null
+     * @throws \Exception
      */
-    public function getOrders($order = null, $options = null)
+    public function getOrders($orderId = null, $options = null)
     {
         $user = $this->getUser();
         $params = ['seller' => $user->id, 'sort' => 'date_desc'];
-        if ($order) {
-            $params['q'] = $order;
+        if ($orderId) {
+            $params['q'] = $orderId;
         }
-        if($options){
+        if ($options) {
             $params = array_merge($params, $options);
         }
         return $this->response(Meli::withAuthToken()->get('orders/search', $params));
@@ -67,19 +69,31 @@ trait MeliRequests
 
     /**
      * Get shipments by order id
-     * @param string|int $order
+     * @param string|int $orderId
      * @return object|null
+     * @throws \Exception
      */
-    public function getShipments($order)
+    public function getShipmentsByOrder($orderId)
     {
-        return $this->response(Meli::withAuthToken()->get("orders/{$order}/shipments"));
+        return $this->response(Meli::withAuthToken()->get("orders/{$orderId}/shipments"));
+    }
+
+    /**
+     * Get shipments by id
+     * @param int|string $shipmentId
+     * @return object
+     * @throws \Exception
+     */
+    public function getShipment($shipmentId)
+    {
+        return $this->response(Meli::withAuthToken()->get("shipments/{$shipmentId}"));
     }
 
     /**
      * Get shipment Label pdf by id
      * @param array|string|int $shipmentIds
      * @param string $responseType
-     * @return object|null
+     * @return array
      */
     public function getShipmentLabels($shipmentIds, $responseType = 'pdf')
     {
@@ -94,12 +108,14 @@ trait MeliRequests
 
     /**
      * Send answer
-     * @param string|int $question
+     * @param string|int $questionId
      * @param string $answer
      * @return object|null
+     * @throws \Exception
      */
-    public function sendAnswer($question, $answer){
-        $params = ['question_id' => $question, 'text' => $answer];
+    public function sendAnswer($questionId, $answer)
+    {
+        $params = ['question_id' => $questionId, 'text' => $answer];
         return $this->response(Meli::withAuthToken()->post('answers', $params));
     }
 
@@ -107,6 +123,7 @@ trait MeliRequests
      * Get all questions
      * @param array|null $options
      * @return object|null
+     * @throws \Exception
      */
     public function getQuestions($options = null)
     {
@@ -116,6 +133,7 @@ trait MeliRequests
     /**
      * Create user test
      * @return object|null
+     * @throws \Exception
      */
     public function createUserTest()
     {
@@ -126,12 +144,13 @@ trait MeliRequests
      * Validate response
      * @param array $request
      * @return object|null
+     * @throws \Exception
      */
-    private function response($request)
+    private function response(array $request)
     {
         if ($request['httpCode'] === 200) {
             return $request['body'];
         }
-        return null;
+        throw new \Exception($request['body'], (int)$request['httpCode']);
     }
 }

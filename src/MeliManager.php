@@ -19,7 +19,7 @@ use Kolovious\MeliSocialite\Traits\MeliRequests;
  * This class is cut off of Meli Official SDK, we removed all the auth part, because we only need the API interaction here.
  * When the Meli Official SDK were available via Composer, we will change this
  */
-class MeliManager extends \Meli
+class MeliManager extends Meli
 {
 
     protected $client_id;

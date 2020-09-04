@@ -4,6 +4,7 @@
 namespace Kolovious\MeliSocialite\Traits;
 
 
+use Exception;
 use Kolovious\MeliSocialite\Facade\Meli;
 
 trait MeliRequests
@@ -12,7 +13,7 @@ trait MeliRequests
      * Get user by id or current user
      * @param string|int|null $userId
      * @return object|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function getUser($userId = 'me')
     {
@@ -24,7 +25,7 @@ trait MeliRequests
      * @param array|string|null $items
      * @param array|null $options
      * @return object|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function getItems($items = null, $options = null)
     {
@@ -52,7 +53,7 @@ trait MeliRequests
      * @param string|int|null $orderId
      * @param array|null $options
      * @return object|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function getOrders($orderId = null, $options = null)
     {
@@ -71,7 +72,7 @@ trait MeliRequests
      * Get shipments by order id
      * @param string|int $orderId
      * @return object|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function getShipmentsByOrder($orderId)
     {
@@ -82,7 +83,7 @@ trait MeliRequests
      * Get shipments by id
      * @param int|string $shipmentId
      * @return object
-     * @throws \Exception
+     * @throws Exception
      */
     public function getShipment($shipmentId)
     {
@@ -111,7 +112,7 @@ trait MeliRequests
      * @param string|int $questionId
      * @param string $answer
      * @return object|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function sendAnswer($questionId, $answer)
     {
@@ -123,7 +124,7 @@ trait MeliRequests
      * Get all questions
      * @param array|null $options
      * @return object|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function getQuestions($options = null)
     {
@@ -133,7 +134,7 @@ trait MeliRequests
     /**
      * Create user test
      * @return object|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function createUserTest()
     {
@@ -144,13 +145,13 @@ trait MeliRequests
      * Validate response
      * @param array $request
      * @return object|null
-     * @throws \Exception
+     * @throws Exception
      */
     private function response(array $request)
     {
         if ($request['httpCode'] === 200) {
             return $request['body'];
         }
-        throw new \Exception($request['body'], (int)$request['httpCode']);
+        throw new Exception($request['body']->message, (int)$request['httpCode']);
     }
 }

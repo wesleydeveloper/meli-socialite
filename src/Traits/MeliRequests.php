@@ -106,6 +106,21 @@ trait MeliRequests
         return Meli::withAuthToken()->download('shipment_labels', $params);
     }
 
+    public function sendMessage($packId, $sellerId, $userId, $userEmail, $message)
+    {
+        $params = [
+            'from' => [
+                'user_id' => $userId,
+                'email' => $userEmail
+            ],
+            'to' => [
+                'user_id' => $sellerId
+            ],
+            'text' => $message
+        ];
+        return $this->response(Meli::withAuthToken()->post("messages/packs/{$packId}/sellers/{$sellerId}", $params));
+    }
+
 
     /**
      * Send answer
